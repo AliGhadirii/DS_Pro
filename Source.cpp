@@ -11,32 +11,20 @@ int MAXLVL = 6;
 
 struct stackNode 
 {
-    int ID;
-    int number_of_station;
-    int number_of_foods;
-    //int *foods;   
-    struct stackNode *next;
+    int data;
+    stackNode * next;
 };
 struct stackNode * top = NULL;
-//void push_stack(int id, int num_of_station, int num_of_foods, int * foodss)
-void push_stack(int id, int num_of_station, int num_of_foods)
+void push_stack(int x)
 {
     stackNode * newnode;
     newnode = new stackNode;
-    newnode->ID = id;
-    newnode->number_of_station = num_of_station;    
-    newnode->number_of_foods = num_of_foods;
-    /*for(int i=0; i < num_of_foods; i++)
-    {
-    	newnode->foods[i]=foodss[i];
-	}*/
+    newnode->data = x;
+   
     newnode->next = top;        
     top = newnode;
-    //size++;
     cout<<"Datas pushed to stack"<<endl;
 }
-
-
 
 struct person
 {
@@ -49,6 +37,7 @@ struct node
 	int n;
 	struct person* head_person;
 	struct node* next;
+	int size = 0;
 }*head_node;
 
 void addfirst(node ** head_node, int n,person * head_person)
@@ -61,21 +50,6 @@ void addfirst(node ** head_node, int n,person * head_person)
 	(*head_node) = new_node;
 }
 
-void addmiddle(node* prev_node, int n,person * head_person)
-{
-	if (prev_node == NULL)
-	{
-		cout << "the given previous node cannot be NULL";
-		return;
-	}
-
-	node* new_node = new node;
-	new_node->n = n;
-	new_node->next = NULL;
-	new_node->head_person = head_person;
-	new_node->next = prev_node->next;
-	prev_node->next = new_node;
-}
 
 void addend(node** head_node, int n,person* head_person)
 {
@@ -316,13 +290,14 @@ int main()
 			cout<<"Id of passenger "<< j + 1<<" : ";
 			cin>>pass_id;
 			cout<<"Number of foods of passgenger "<< j + 1<<" : ";
-			cin>>num_foods;				
-		/*	for(int q = 0; q < num_foods; q++)
+			cin>>num_foods;	
+			for(int q = 0; q < num_foods; q++)
 			{
 				cout<<"Now enter the food id : "<< q + 1<<" : ";
 				cin>>food_id[q];
-			}	*/	
-			push_stack(pass_id, station_num, num_foods);
+				push_stack(food_id[q]);
+			}			
+			push_stack(pass_id);
 		}					
 	}	
 	system("cls");
@@ -340,12 +315,13 @@ int main()
 			cin>>pass_id;
 			cout<<"Number of foods of passgenger "<< j + 1<<" : ";
 			cin>>num_foods;				
-		/*	for(int q = 0; q < num_foods; q++)
+			for(int q = 0; q < num_foods; q++)
 			{
 				cout<<"Now enter the food id : "<< q + 1<<" : ";
 				cin>>food_id[q];
-			}	*/	
-			push_stack(pass_id, station_num, num_foods);
+				push_stack(food_id[q]);
+			}
+			push_stack(pass_id);				
 		}					
 	}	
 	
@@ -353,9 +329,6 @@ int main()
 	
 	
 	stackNode *temp;
-	cout<<"********************** list of all passengers IDs ***************************\n";
-	for(temp = top; temp != NULL; temp = temp->next)
-	cout<<temp->ID<<endl;
 	/*struct node* temp = head_node1;
 	while (temp->next != NULL)
 	{
