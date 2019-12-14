@@ -7,7 +7,25 @@
 #include<algorithm>
 
 using namespace std;
-int MAXLVL = 3;
+int MAXLVL = 6;
+
+struct stackNode 
+{
+    int data;
+    stackNode * next;
+};
+struct stackNode * top = NULL;
+void push_stack(int x)
+{
+    stackNode * newnode;
+    newnode = new stackNode;
+    newnode->data = x;
+   
+    newnode->next = top;        
+    top = newnode;
+    cout<<"Datas pushed to stack"<<endl;
+}
+
 struct person
 {
 	int id;
@@ -19,6 +37,7 @@ struct node
 	int n;
 	struct person* head_person;
 	struct node* next;
+	int size = 0;
 }*head_node;
 
 void addfirst(node ** head_node, int n,person * head_person)
@@ -30,22 +49,15 @@ void addfirst(node ** head_node, int n,person * head_person)
 	new_node->next = (*head_node);
 	(*head_node) = new_node;
 }
-
-void addmiddle(node* prev_node, int n,person * head_person)
+void addfirst_person(person** head_node, int id)
 {
-	if (prev_node == NULL)
-	{
-		cout << "the given previous node cannot be NULL";
-		return;
-	}
-
-	node* new_node = new node;
-	new_node->n = n;
+	person* new_node = new person;
+	new_node->id = id;
 	new_node->next = NULL;
-	new_node->head_person = head_person;
-	new_node->next = prev_node->next;
-	prev_node->next = new_node;
+	new_node->next = (*head_node);
+	(*head_node) = new_node;
 }
+
 
 void addend(node** head_node, int n,person* head_person)
 {
@@ -59,6 +71,22 @@ void addend(node** head_node, int n,person* head_person)
 		return;
 	}
 	node* temp = (*head_node);
+	while (temp->next != NULL)
+		temp = temp->next;
+	temp->next = new_node;
+	return;
+}
+void addend_person(person** head_node, int id)
+{
+	person* new_node = new person;
+	new_node->id = id;
+	new_node->next = NULL;
+	if (*head_node == NULL)
+	{
+		*head_node = new_node;
+		return;
+	}
+	person* temp = (*head_node);
 	while (temp->next != NULL)
 		temp = temp->next;
 	temp->next = new_node;
@@ -202,7 +230,7 @@ void SkipList::insertElement(int key)
   SkipList convert_queue_to_skiplist(struct node* head_node)
 {
 	//creating a skiplist with maxlevel of 3 and p = 0.5
-	SkipList lst(3, 0.5);
+	SkipList lst(6, 0.5);
 	node *temp = head_node;
 	while(temp != NULL)
 	{
@@ -233,6 +261,7 @@ void SkipList::insertElement(int key)
 
 int main()
 {
+	int num1, station_num, num_pass, pass_id, num_foods, *food_id, num2;	
 	
 	struct node* head_node1 = NULL;
 	struct node* head_node2 = NULL;
@@ -270,7 +299,81 @@ int main()
 			addend(&head_node2, random_nums[i], NULL);
 		}
 	}
-
+	SkipList mainskl = convert_queue_to_skiplist(head_node1);
+	cout<<"Number of stations of FIRST train in which passengers transfer : ";
+	cin>>num1;
+	for (int e = 0; e < num1; e++)
+	{
+		for (int i = 0; i < num1; i++)
+		{
+			cout << "Station number : ";
+			cin >> station_num;
+			cout << "Number of passengers transfered in this staion : ";
+			cin >> num_pass;
+			//az inja shoro kon
+			person* temp = NULL;
+			for (int j = 0; j < num_pass; j++)
+			{
+				cout << "Id of passenger " << j + 1 << " : ";
+				cin >> pass_id;
+				if (temp == NULL)
+				{
+					addfirst_person(&temp, pass_id);
+				}
+				else
+				{
+					addend_person(&temp, pass_id);
+				}
+				cout << "Number of foods of passgenger " << j + 1 << " : ";
+				cin >> num_foods;
+				for (int q = 0; q < num_foods; q++)
+				{
+					cout << "Now enter the food id : " << q + 1 << " : ";
+					cin >> food_id[q];
+					push_stack(food_id[q]);
+				}
+				push_stack(pass_id);
+			}
+		}
+	}
+	system("cls");
+	cout<<"Number of stations of SECOND train in which passengers transfer : ";
+	cin>>num2;
+	for(int i = 0; i < num2; i++)
+	{
+		cout<<"Station number : ";
+		cin>>station_num;
+		cout<<"Number of passengers transfered in this staion : ";
+		cin>>num_pass;
+		person* temp = NULL;
+		for(int j = 0; j < num_pass; j++)
+		{
+			cout<<"Id of passenger "<< j + 1<<" : ";
+			cin>>pass_id;
+			if (temp == NULL)
+			{
+				addfirst_person(&temp, pass_id);
+			}
+			else
+			{
+				addend_person(&temp, pass_id);
+			}
+			cout<<"Number of foods of passgenger "<< j + 1<<" : ";
+			cin>>num_foods;				
+			for(int q = 0; q < num_foods; q++)
+			{
+				cout<<"Now enter the food id : "<< q + 1<<" : ";
+				cin>>food_id[q];
+				push_stack(food_id[q]);
+			}
+			push_stack(pass_id);				
+		}					
+	}	
+	
+	
+	
+	
+	stackNode *temp;
 	/*struct node* temp = head_node1;
 	while (temp->next != NULL)
 	{
