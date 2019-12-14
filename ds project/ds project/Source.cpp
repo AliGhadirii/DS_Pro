@@ -14,16 +14,23 @@ struct stackNode
     int data;
     stackNode * next;
 };
-struct stackNode * top = NULL;
-void push_stack(int x)
+void push_stack(stackNode** head_stack, int x)
 {
-    stackNode * newnode;
-    newnode = new stackNode;
-    newnode->data = x;
-   
-    newnode->next = top;        
-    top = newnode;
-    cout<<"Datas pushed to stack"<<endl;
+	stackNode* newnode;
+	newnode = new stackNode;
+	newnode->data = x;
+	if ((*head_stack) == NULL)
+	{
+		*head_stack = newnode;
+		newnode->next = NULL;
+
+	}
+	else {
+		newnode->next = *head_stack;
+		*head_stack = newnode;
+	}
+
+	cout << "Datas pushed to stack" << endl;
 }
 
 struct person
@@ -37,7 +44,6 @@ struct node
 	int n;
 	struct person* head_person;
 	struct node* next;
-	int size = 0;
 }*head_node;
 
 void addfirst(node ** head_node, int n,person * head_person)
@@ -57,8 +63,6 @@ void addfirst_person(person** head_node, int id)
 	new_node->next = (*head_node);
 	(*head_node) = new_node;
 }
-
-
 void addend(node** head_node, int n,person* head_person)
 {
 	node* new_node = new node;
@@ -98,13 +102,17 @@ class SkipListNode
 { 
 public: 
     int key; 
+	struct person* head_person;
+	SkipListNode* next;
     SkipListNode **forward; 
-    SkipListNode(int, int); 
+	SkipListNode(int, int, struct person*, SkipListNode*);
 }; 
   
-SkipListNode::SkipListNode(int key, int level) 
+SkipListNode::SkipListNode(int key, int level,struct person* head_person,SkipListNode * next) 
 { 
     this->key = key; 
+	this->head_person = head_person;
+	this->next = next;
     forward = new SkipListNode*[level+1]; 
     memset(forward, 0, sizeof(SkipListNode*)*(level+1)); 
 }; 
@@ -124,6 +132,15 @@ public:
     void insertElement(int); 
     void displayList(); 
 }; 
+
+SkipList::SkipList(int MAXLVL, float P)
+{
+	this->MAXLVL = MAXLVL;
+	this->P = P;
+	level = 0;
+
+	header = new SkipListNode(-1, MAXLVL, NULL, NULL);
+};
   
 SkipListNode* SkipList::searchElement(int key)
 { 
@@ -152,16 +169,7 @@ SkipListNode* SkipList::searchElement(int key)
 	}
     
 }; 
-  
-SkipList::SkipList(int MAXLVL, float P) 
-{ 
-    this->MAXLVL = MAXLVL; 
-    this->P = P; 
-    level = 0; 
-
-    header = new SkipListNode(-1, MAXLVL); 
-}; 
-  
+ 
 int SkipList::randomLevel() 
 { 
     float r = (float)rand()/RAND_MAX; 
@@ -176,7 +184,7 @@ int SkipList::randomLevel()
   
 SkipListNode* SkipList::createNode(int key, int level) 
 { 
-    SkipListNode *n = new SkipListNode(key, level); 
+    SkipListNode *n = new SkipListNode(key, level,NULL,NULL);
     return n; 
 }; 
 
@@ -184,7 +192,7 @@ void SkipList::insertElement(int key)
 { 
     SkipListNode *current = header; 
   
-    SkipListNode *update[4]; 
+    SkipListNode *update[7]; 
     memset(update, 0, sizeof(SkipListNode*)*(MAXLVL+1)); 
  
     /*
@@ -261,8 +269,8 @@ void SkipList::insertElement(int key)
 
 int main()
 {
-	int num1, station_num, num_pass, pass_id, num_foods, *food_id, num2;	
-	
+	int num1, station_num, num_pass, pass_id, num_foods, food_id[5], num2;	
+	vector< stackNode*> stack_heads;
 	struct node* head_node1 = NULL;
 	struct node* head_node2 = NULL;
 	for (int i = 1; i <= 50; i++)
@@ -310,7 +318,7 @@ int main()
 			cin >> station_num;
 			cout << "Number of passengers transfered in this staion : ";
 			cin >> num_pass;
-			//az inja shoro kon
+			SkipListNode* currentskl = mainskl.searchElement(station_num);
 			person* temp = NULL;
 			for (int j = 0; j < num_pass; j++)
 			{
@@ -334,6 +342,7 @@ int main()
 				}
 				push_stack(pass_id);
 			}
+			currentskl->head_person = temp;
 		}
 	}
 	system("cls");
@@ -345,36 +354,75 @@ int main()
 		cin>>station_num;
 		cout<<"Number of passengers transfered in this staion : ";
 		cin>>num_pass;
-		person* temp = NULL;
+		person* head_person_temp = NULL;
 		for(int j = 0; j < num_pass; j++)
 		{
 			cout<<"Id of passenger "<< j + 1<<" : ";
 			cin>>pass_id;
-			if (temp == NULL)
+			if (head_person_temp == NULL)
 			{
-				addfirst_person(&temp, pass_id);
+				addfirst_person(&head_person_temp, pass_id);
 			}
 			else
 			{
-				addend_person(&temp, pass_id);
+				addend_person(&head_person_temp, pass_id);
 			}
 			cout<<"Number of foods of passgenger "<< j + 1<<" : ";
-			cin>>num_foods;				
+			cin>>num_foods;	
+			stackNode* head_temp_stack = NULL;
 			for(int q = 0; q < num_foods; q++)
 			{
 				cout<<"Now enter the food id : "<< q + 1<<" : ";
 				cin>>food_id[q];
-				push_stack(food_id[q]);
+				push_stack(&head_temp_stack,food_id[q]);
 			}
-			push_stack(pass_id);				
-		}					
-	}	
+			push_stack(&head_temp_stack,pass_id);
+			stack_heads.push_back(head_temp_stack);
+		}
+		node* temp = head_node2;
+		while (temp->next != NULL)
+		{
+			if (temp->n == station_num)
+			{
+				temp->head_person = head_person_temp;
+			}
+			temp = temp->next;
+		}
+
+	}
+	node* tempp = head_node2;
+	while (tempp->next != NULL)
+	{
+		if (tempp->head_person != NULL)
+		{
+			person* temp2 = tempp->head_person;
+			while (temp2->next != NULL)
+			{
+				cout << temp2->id << ' ';
+				temp2 = temp2->next;
+			}
+			cout << temp2->id << ' ';
+			cout << endl;
+		}
+		tempp = tempp->next;
+	}
+	for (int i = 0; i < stack_heads.size(); i++)
+	{
+		stackNode* temp = stack_heads[i];
+		while (temp->next != NULL)
+		{
+			cout << temp->data << ' ';
+			temp = temp->next;
+		}
+		cout << temp->data << ' ';
+		cout << endl;
+	}
 	
 	
 	
 	
-	stackNode *temp;
-	/*struct node* temp = head_node1;
+	/*stackNode *temp;
+	struct node* temp = head_node1;
 	while (temp->next != NULL)
 	{
 		cout << temp->n << ' ';
