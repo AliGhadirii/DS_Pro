@@ -1,4 +1,3 @@
 ﻿  Source.cpp
-C:\gits\DS_Pro\ds project\ds project\Source.cpp(411): warning C4018: '<': signed/unsigned mismatch
-C:\gits\DS_Pro\ds project\ds project\Source.cpp(274): warning C4101: 'num1': unreferenced local variable
+C:\gits\DS_Pro\ds project\ds project\Source.cpp(266): warning C4101: 'num2': unreferenced local variable
   ds project.vcxproj -> C:\gits\DS_Pro\ds project\Debug\ds project.exe
