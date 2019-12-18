@@ -8,7 +8,76 @@
 
 using namespace std;
 int MAXLVL = 6;
+class Queue {
+	int front, rear, capacity;
+	int size = 0;
+	int* queue;
+public:
+	Queue(int c)
+	{
+		front = rear = 0;
+		capacity = c;
+		queue = new int;
+	}
 
+	~Queue() { delete[] queue; } 
+	void insert_queue(int data)
+	{
+		if (capacity == rear) {
+			cout<<"\nQueue is full\n";
+			return;
+		}
+		else {
+			queue[rear] = data;
+			size++;
+			rear++;
+		}
+		return;
+	}
+	void pop_queue()
+	{
+		
+		if (front == rear) {
+			cout<<"\nQueue is  empty\n";
+			return;
+		}
+		else {
+			for (int i = 0; i < rear - 1; i++) {
+				queue[i] = queue[i + 1];
+			}
+			rear--;
+			size--;
+		}
+		return;
+	} 
+	void print()
+	{
+		int i;
+		if (front == rear) {
+			cout<<"\nQueue is Empty\n";
+			return;
+		}
+		for (i = front; i < rear; i++) {
+			cout<< queue[i]<<' ';
+		}
+		cout << endl;
+		return;
+	}
+
+	void get_front()
+	{
+		if (front == rear) {
+			cout<<"\nQueue is Empty\n";
+			return;
+		}
+		cout<<"\nFront Element is: "<<queue[front];
+		return;
+	}
+	int get_size()
+	{
+		return size;
+	}
+};
 struct stackNode 
 {
     int data;
@@ -31,6 +100,26 @@ void push_stack(stackNode** head_stack, int x)
 	}
 
 	cout << "Datas pushed to stack" << endl;
+}
+int get_top(stackNode* head_stack)
+{
+	return head_stack->data;
+}
+void find_print_stack(vector<stackNode*> vectoserach,int key)
+{
+	for (int i = 0; i < vectoserach.size(); i++)
+	{
+		if (get_top(vectoserach[i]) == key)
+		{
+			stackNode* temp = vectoserach[i]->next;
+			while (temp->next != NULL)
+			{
+				cout << temp->data << ' ';
+			}
+			cout << temp->data << endl;
+
+		}
+	}
 }
 
 struct person
@@ -263,9 +352,14 @@ void SkipList::print_persons()
 
 int main()
 {
-	int num1, station_num, num_pass, pass_id, num_foods, food_id[5], num2;	
+	int num1, station_num, num_pass, pass_id, num_foods, food_id[5], num2;
+	vector<int> stations_transed(50, 0);
 	vector<stackNode*> stack_heads1;
 	vector<stackNode*> stack_heads2;
+	cout << "please enter number of passengers of train1 and train2 : ";
+	int n, m; cin >> n >> m;
+	Queue train1_ids(n);
+	Queue train2_ids(m);
 	struct node* head_node2 = NULL;
 	SkipList mainlst(6, 0.5);
 	for (int i = 1; i <= 50; i++)
@@ -294,6 +388,7 @@ int main()
 			addend(&head_node2, random_nums[i], NULL);
 		}
 	}
+	system("cls");
 	cout<<"Number of stations of FIRST train in which passengers transfer : ";
 	cin>>num1;
 	for (int i = 0; i < num1; i++)
@@ -311,10 +406,12 @@ int main()
 			if (temp == NULL)
 			{
 				addfirst_person(&temp, pass_id);
+				stations_transed[station_num - 1]++;
 			}
 			else
 			{
 				addend_person(&temp, pass_id);
+				stations_transed[station_num - 1]++;
 			}
 			cout << "Number of foods of passgenger " << j + 1 << " : ";
 			cin >> num_foods;
@@ -326,11 +423,12 @@ int main()
 				push_stack(&head_temp_stack, food_id[q]);
 			}
 			push_stack(&head_temp_stack, pass_id);
+			train1_ids.insert_queue(pass_id);
 			stack_heads1.push_back(head_temp_stack);
 		}
 		search_result->head_person = temp;
 	}
-	/*cout<<"Number of stations of SECOND train in which passengers transfer : ";
+	cout<<"Number of stations of SECOND train in which passengers transfer : ";
 	cin>>num2;
 	for(int i = 0; i < num2; i++)
 	{
@@ -346,10 +444,12 @@ int main()
 			if (head_person_temp == NULL)
 			{
 				addfirst_person(&head_person_temp, pass_id);
+				stations_transed[station_num - 1]++;
 			}
 			else
 			{
 				addend_person(&head_person_temp, pass_id);
+				stations_transed[station_num - 1]++;
 			}
 			cout<<"Number of foods of passgenger "<< j + 1<<" : ";
 			cin>>num_foods;	
@@ -361,6 +461,7 @@ int main()
 				push_stack(&head_temp_stack,food_id[q]);
 			}
 			push_stack(&head_temp_stack,pass_id);
+			train2_ids.insert_queue(pass_id);
 			stack_heads2.push_back(head_temp_stack);
 		}
 		node* temp = head_node2;
@@ -373,9 +474,22 @@ int main()
 			temp = temp->next;
 		}
 
-	}*/
+	}
+	system("cls");
+	cout << " passengers transfered in stations" << endl;
+	for (int i = 0; i < 50; i++)
+	{
+		cout << i + 1 << ' : ' << stations_transed[i] << ' ';
+	}
+	cout << "\npassengers ramained in train1's last station: " << n - train1_ids.get_size();
+	cout << "\npassengers ramained in train2's last station: " << m - train2_ids.get_size();
+	cout << "\ntrain1's queue: "; 
+	train1_ids.print();
+	cout << "\ntrain2's queue: ";
+	train2_ids.print();
+
 	//------------------------------------------------------------------------------------ghatar 1 test----------------------------------------------------------------------
-	mainlst.print_persons();
+	//mainlst.print_persons();
 	//------------------------------------------------------------------------------------ghatar 2 test-----------------------------------------------------------------------
 	/*node* tempp = head_node2;
 	while (tempp->next != NULL)
