@@ -121,7 +121,6 @@ void find_print_stack(vector<stackNode*> vectoserach,int key)
 		}
 	}
 }
-
 struct person
 {
 	int id;
@@ -133,7 +132,6 @@ struct node
 	struct person* head_person;
 	struct node* next;
 }*head_node;
-
 void addfirst(node ** head_node, int n,person * head_person)
 {
 	node* new_node = new node;
@@ -192,7 +190,6 @@ public:
 	SkipListNode** forward;
 	SkipListNode(int, int, struct person*);
 };
-
 SkipListNode::SkipListNode(int key, int level, struct person* head_person)
 {
 	this->key = key;
@@ -200,7 +197,6 @@ SkipListNode::SkipListNode(int key, int level, struct person* head_person)
 	forward = new SkipListNode * [level + 1];
 	memset(forward, 0, sizeof(SkipListNode*) * (level + 1));
 };
-
 class SkipList
 {
 
@@ -218,7 +214,6 @@ public:
 	void displayList();
 	void print_persons();
 };
-
 SkipList::SkipList(int MAXLVL, float P)
 {
 	this->MAXLVL = MAXLVL;
@@ -227,7 +222,6 @@ SkipList::SkipList(int MAXLVL, float P)
 
 	header = new SkipListNode(-1, MAXLVL, NULL);
 };
-
 SkipListNode* SkipList::searchElement(int key)
 {
 	SkipListNode* current = header;
@@ -255,7 +249,6 @@ SkipListNode* SkipList::searchElement(int key)
 	}
 
 };
-
 int SkipList::randomLevel()
 {
 	float r = (float)rand() / RAND_MAX;
@@ -270,15 +263,12 @@ int SkipList::randomLevel()
 SkipListNode* SkipList::get_header()
 {
 	return this->header;
-}
-;
-
+};
 SkipListNode* SkipList::createNode(int key, int level)
 {
 	SkipListNode* n = new SkipListNode(key, level, NULL);
 	return n;
 };
-
 void SkipList::insertElement(int key)
 {
 	SkipListNode* current = header;
@@ -343,15 +333,31 @@ void SkipList::print_persons()
 		current = current->forward[0];
 	}
 	return ;
+};
+void help()
+{
+	cout<<"\n************\n";
+	cout<<"1. Passengers transfered in each station"<<endl;
+	cout<<"\n************\n";
+	cout<<"2. Passengers remained in the FIRST train's last station"<<endl;
+	cout<<"\n************\n";
+	cout<<"3. Passengers remained in the SECOND train's last station"<<endl;
+	cout<<"\n************\n";
+	cout<<"4. Food delivery queue of FIRST train"<<endl;
+	cout<<"\n************\n";
+	cout<<"5. Food delivery queue of FIRST train"<<endl;
+	cout<<"\n************\n";
+	cout<<"6. List of food codes ordered in the FIRST train"<<endl;
+	cout<<"\n************\n";
+	cout<<"7. List of food codes ordered in the SECOND train"<<endl;
+	cout<<"\n************\n";
+	cout<<"8. Exit"<<endl;
 }
-;
-
-
   
 
 int main()
 {
-	int num1, station_num, num_pass, pass_id, num_foods, food_id[5], num2;
+	int num1, station_num, num_pass, pass_id, num_foods, food_id[5], num2, choice;
 	vector<int> stations_transed(50, 0);
 	vector<stackNode*> stack_heads1;
 	vector<stackNode*> stack_heads2;
@@ -476,7 +482,94 @@ int main()
 		}
 
 	}
-	system("cls");
+//	system("cls");
+	while(1)
+	{
+		help();
+		cout<<"Enter a choice : ";
+		cin>>choice;
+	
+		if(choice == 1)
+		{
+			system("cls");
+			for (int i = 0; i < 50; i++)
+			{
+				cout << i + 1 << " : " << stations_transed[i] << endl;
+			}
+		}
+
+		if(choice == 2)
+		{
+			system("cls");
+			cout << "\npassengers ramained in train1's last station: " << n - train1_ids.get_size() << endl;
+		}
+
+		if(choice == 3)
+		{
+			system("cls");
+			cout << "\npassengers ramained in train2's last station: " << m - train2_ids.get_size() << endl; 
+		}
+
+		if(choice == 4)
+		{
+			system("cls");
+			cout << "\ntrain1's queue: "; 
+			train1_ids.print();
+			cout<<endl;
+		}
+
+		if(choice == 5)
+		{
+			system("cls");
+			cout << "\ntrain2's queue: ";
+			train2_ids.print();
+			cout<<endl;
+		}
+
+		if(choice == 6)
+		{
+			system("cls");
+			cout<<"List of food codes ordered in the FIRST train :\n";
+			cout<<"\n*********************************************\n";
+
+			for(int q=0; q < train1_ids.get_size(); q++)
+			{	
+				cout<<"\n-------------------\n";
+				while(stack_heads1[q]->next != NULL)
+				{
+					cout<<stack_heads1[q]->next->data<<endl;
+					stack_heads1[q] = stack_heads1[q]->next;
+				}
+			}
+		}
+
+		if(choice == 7)
+		{
+			system("cls");
+			cout<<"List of food codes ordered in the SECOND train :\n";
+			cout<<"\n*********************************************\n";
+
+			for(int q=0; q < train2_ids.get_size(); q++)
+			{	
+				cout<<"\n-------------------\n";
+				while(stack_heads2[q]->next != NULL)
+				{
+					cout<<stack_heads2[q]->next->data<<endl;
+					stack_heads2[q] = stack_heads2[q]->next;
+				}
+			}
+		}
+		
+
+		if(choice == 8)
+			break;
+	
+	}
+
+
+	
+	
+	/*system("cls");
 	cout << " passengers transfered in stations" << endl;
 	for (int i = 0; i < 50; i++)
 	{
@@ -487,7 +580,7 @@ int main()
 	cout << "\ntrain1's queue: "; 
 	train1_ids.print();
 	cout << "\ntrain2's queue: ";
-	train2_ids.print();
+	train2_ids.print();*/
 
 	//------------------------------------------------------------------------------------ghatar 1 test----------------------------------------------------------------------
 	//mainlst.print_persons();
@@ -519,7 +612,7 @@ int main()
 		cout << temp->data << ' ';
 		cout << endl;
 	}*/
-	system("cls");
+	/*system("cls");
 	cout<<"List of food codes ordered in the FIRST train :\n";
 	cout<<"\n*********************************************\n";
 
@@ -543,7 +636,7 @@ int main()
 			cout<<stack_heads2[q]->next->data<<endl;
 			stack_heads2[q] = stack_heads2[q]->next;
 		}
-	}
+	}*/
 
 	
 	return 0;
